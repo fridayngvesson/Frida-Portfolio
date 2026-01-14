@@ -18,32 +18,55 @@ import {
 } from "lucide-react";
 
 const skills: Array<{ name: string; icon: LucideIcon; category: string }> = [
-  { name: "Figma", icon: Palette, category: "design" },
-  { name: "Adobe CC", icon: Layers, category: "design" },
-  { name: "Procreate", icon: Paintbrush, category: "design" },
-  { name: "Elementor", icon: Layout, category: "design" },
-  { name: "React", icon: Code, category: "dev" },
-  { name: "TypeScript", icon: FileCode, category: "dev" },
-  { name: "JavaScript", icon: FileCode, category: "dev" },
-  { name: "Node.js", icon: Database, category: "dev" },
-  { name: "MongoDB", icon: Database, category: "dev" },
-  { name: "Cursor", icon: MousePointer, category: "tools" },
-  { name: "Lovable", icon: Heart, category: "tools" },
-  { name: "Git", icon: GitBranch, category: "tools" },
-  { name: "GitHub", icon: Github, category: "tools" },
-  { name: "HTML/CSS", icon: Globe, category: "dev" },
-  { name: "WordPress", icon: FileText, category: "tools" },
+  // THE AESTHETIC (Design & UX)
+  { name: "Figma", icon: Palette, category: "The Aesthetic" },
+  { name: "Adobe CC", icon: Layers, category: "The Aesthetic" },
+  { name: "Procreate", icon: Paintbrush, category: "The Aesthetic" },
+  { name: "Elementor", icon: Layout, category: "The Aesthetic" },
+
+  // THE ENGINE (Development & Code)
+  { name: "React", icon: Code, category: "The Engine" },
+  { name: "TypeScript", icon: FileCode, category: "The Engine" },
+  { name: "JavaScript", icon: FileCode, category: "The Engine" },
+  { name: "HTML/CSS", icon: Globe, category: "The Engine" },
+  { name: "Node.js", icon: Database, category: "The Engine" },
+  { name: "MongoDB", icon: Database, category: "The Engine" },
+  { name: "WordPress", icon: FileText, category: "The Engine" },
+
+  // THE ESSENTIALS (Tools & Workflow)
+  { name: "Cursor", icon: MousePointer, category: "The Essentials" },
+  { name: "Lovable", icon: Heart, category: "The Essentials" },
+  { name: "Git", icon: GitBranch, category: "The Essentials" },
+  { name: "GitHub", icon: Github, category: "The Essentials" },
 ];
+
+// Kategorifärger - starka pastellfärger
+const categoryColors: Record<string, { hue: number; bgClass: string }> = {
+  "The Aesthetic": { 
+    hue: 330, // Rosa/Magenta pastell
+    bgClass: "bg-pink-400" 
+  },
+  "The Engine": { 
+    hue: 200, // Blå pastell
+    bgClass: "bg-blue-400" 
+  },
+  "The Essentials": { 
+    hue: 140, // Grön pastell
+    bgClass: "bg-green-400" 
+  },
+};
 
 /**
  * Genererar positioner för ikonerna i en full regnbåge under väskan
- * @param index - Index för ikonen i skills-arrayen
+ * @param index - Index för ikonen i den filtrerade arrayen
  * @param existingPositions - Array med redan genererade positioner för kollisionsdetektering
+ * @param totalCount - Totalt antal skills som ska visas (för korrekt vinkelberäkning)
  * @returns {x, y} - Position i pixlar relativt centrum
  */
 const generateRandomPosition = (
   index: number,
-  existingPositions: Array<{ x: number; y: number }> = []
+  existingPositions: Array<{ x: number; y: number }> = [],
+  totalCount: number = skills.length
 ): { x: number; y: number } => {
   // Full regnbåge: från -π till π (360 grader totalt, men vi ritar bara nedre halvan)
   // Detta ger en halvcirkelformad båge som går från vänster, nedåt, till höger
@@ -51,8 +74,8 @@ const generateRandomPosition = (
   const bågSlut = Math.PI; // Slutar till höger (180 grader)
   const bågVinkel = bågSlut - bågStart; // Total vinkel: 2π (360 grader)
   
-  // Delar bågen jämnt mellan alla ikoner
-  const angle = bågStart + (index / (skills.length - 1 || 1)) * bågVinkel;
+  // Delar bågen jämnt mellan alla ikoner baserat på faktiskt antal
+  const angle = bågStart + (index / (totalCount - 1 || 1)) * bågVinkel;
 
   // Radie från centrum för bågen - större för full regnbåge
   const baseRadius = 200; // Ökad radie för större båge
@@ -108,18 +131,26 @@ const generateRandomPosition = (
 const SkillBag = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Genererar alla positioner en gång när komponenten renderas
-  // Detta säkerställer att positionerna är konsekventa och kollisionsdetektering fungerar
+  // Filtrera skills baserat på vald kategori
+  const filteredSkills = useMemo(() => {
+    if (!selectedCategory) {
+      return skills; // Visa alla om ingen kategori är vald
+    }
+    return skills.filter(skill => skill.category === selectedCategory);
+  }, [selectedCategory]);
+
+  // Genererar positioner för filtrerade skills
   const skillPositions = useMemo(() => {
     const positions: Array<{ x: number; y: number }> = [];
-    for (let i = 0; i < skills.length; i++) {
-      // Använd alla tidigare genererade positioner för kollisionsdetektering
-      const position = generateRandomPosition(i, positions);
+    const totalCount = filteredSkills.length;
+    for (let i = 0; i < totalCount; i++) {
+      const position = generateRandomPosition(i, positions, totalCount);
       positions.push(position);
     }
     return positions;
-  }, []); // Tom dependency array = körs bara en gång
+  }, [filteredSkills]);
 
   return (
     <section id="skills" className="py-32 px-6 md:px-12 lg:px-24">
@@ -130,6 +161,13 @@ const SkillBag = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
+          animate={{
+            filter: isOpen ? "blur(4px)" : "blur(0px)",
+            opacity: isOpen ? 0.5 : 1,
+          }}
+          style={{
+            transition: "filter 0.3s ease, opacity 0.3s ease",
+          }}
         >
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl mb-4">
             The Skill Bag
@@ -145,13 +183,13 @@ const SkillBag = () => {
           {/* Floating Skills - Ikonerna som flyter ut från väskan */}
           <AnimatePresence>
             {isOpen &&
-              skills.map((skill, index) => {
+              filteredSkills.map((skill, index) => {
                 // Använder den förgenererade positionen från useMemo
                 const position = skillPositions[index];
 
-                // Beräknar regnbågsfärg baserat på index
-                // Delar 360 grader (full färgcirkel) jämnt mellan alla ikoner
-                const hue = (index / skills.length) * 360;
+                // Använder kategorifärg istället för regnbågsfärg
+                const categoryColor = categoryColors[skill.category] || categoryColors["The Aesthetic"];
+                const hue = categoryColor.hue;
                 
                 return (
                   <motion.div
@@ -207,10 +245,10 @@ const SkillBag = () => {
                         border: { duration: 0.15 },
                         boxShadow: { duration: 0.15 },
                       }}
-                      // Regnbågsfärg på border och skugga vid hover - snabb transition
+                      // Kategorifärg på border och skugga vid hover
                       whileHover={{
-                        border: `2px solid hsl(${hue}, 80%, 55%)`,
-                        boxShadow: `0 10px 15px -3px hsla(${hue}, 80%, 55%, 0.4), 0 0 20px hsla(${hue}, 80%, 55%, 0.2)`,
+                        border: `2px solid hsl(${hue}, 70%, 60%)`,
+                        boxShadow: `0 10px 15px -3px hsla(${hue}, 70%, 60%, 0.4), 0 0 20px hsla(${hue}, 70%, 60%, 0.2)`,
                       }}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
@@ -219,8 +257,8 @@ const SkillBag = () => {
                         className="w-5 h-5 transition-colors duration-150"
                         style={{
                           color: hoveredIndex === index 
-                            ? `hsl(${hue}, 80%, 50%)` 
-                            : "hsl(var(--foreground))",
+                            ? `hsl(${hue}, 70%, 55%)` 
+                            : `hsl(${hue}, 60%, 50%)`, // Kategorifärg även när inte hover
                         }}
                       />
                       <span className="font-body text-sm font-medium text-foreground whitespace-nowrap">
@@ -236,7 +274,13 @@ const SkillBag = () => {
           {/* z-20: lägre än ikonerna (z-30) så ikonerna hamnar framför */}
           <motion.button
             className="relative z-20 focus:outline-none group"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+              // När väskan öppnas, visa alla skills (återställ kategori)
+              if (!isOpen) {
+                setSelectedCategory(null);
+              }
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0, y: 30 }}
@@ -306,17 +350,55 @@ const SkillBag = () => {
           transition={{ delay: 0.4 }}
         >
           {[
-            { label: "Design", color: "bg-terracotta" },
-            { label: "Development", color: "bg-sage" },
-            { label: "Tools", color: "bg-charcoal-light" },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${item.color}`} />
-              <span className="font-body text-xs text-muted-foreground">
-                {item.label}
-              </span>
-            </div>
-          ))}
+            { label: "The Aesthetic", category: "The Aesthetic" },
+            { label: "The Engine", category: "The Engine" },
+            { label: "The Essentials", category: "The Essentials" },
+          ].map((item) => {
+            const categoryColor = categoryColors[item.category];
+            const hue = categoryColor.hue;
+            return (
+              <motion.button
+                key={item.label}
+                className="flex items-center gap-2 cursor-pointer group"
+                onClick={() => {
+                  // Toggle: om samma kategori klickas, visa alla
+                  if (selectedCategory === item.category) {
+                    setSelectedCategory(null);
+                  } else {
+                    setSelectedCategory(item.category);
+                  }
+                  // Öppna väskan om den inte redan är öppen
+                  if (!isOpen) {
+                    setIsOpen(true);
+                  }
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span 
+                  className="w-2 h-2 rounded-full transition-opacity"
+                  style={{
+                    backgroundColor: `hsl(${hue}, 70%, 60%)`,
+                    opacity: selectedCategory === item.category ? 1 : 0.6,
+                  }}
+                />
+                <span 
+                  className={`font-body text-xs transition-colors ${
+                    selectedCategory === item.category 
+                      ? 'text-foreground font-medium' 
+                      : 'text-muted-foreground group-hover:text-foreground'
+                  }`}
+                  style={{
+                    color: selectedCategory === item.category 
+                      ? `hsl(${hue}, 70%, 50%)` 
+                      : undefined,
+                  }}
+                >
+                  {item.label}
+                </span>
+              </motion.button>
+            );
+          })}
         </motion.div>
       </div>
     </section>
