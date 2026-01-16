@@ -173,12 +173,12 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
           {project.description}
         </p>
 
-        <motion.div
-          className="mt-8 inline-flex items-center gap-2 text-sm font-body text-foreground group-hover:text-primary transition-colors"
-          whileHover={{ x: 4 }}
-        >
-          <span>{project.url ? "View Project" : "Coming Soon"}</span>
-          {project.url && (
+        {project.url && (
+          <motion.div
+            className="mt-8 inline-flex items-center gap-2 text-sm font-body text-foreground group-hover:text-primary transition-colors"
+            whileHover={{ x: 4 }}
+          >
+            <span>View Project</span>
             <svg
               width="16"
               height="16"
@@ -194,8 +194,8 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
                 strokeLinejoin="round"
               />
             </svg>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </CardWrapper>
   );
