@@ -177,7 +177,7 @@ const SkillBag = () => {
             The Skill Bag
           </h2>
           <p className="font-body text-muted-foreground">
-          A look at the tools I use to design and build.
+          Unpack the bag below to see the tools I use to design and build.
           </p>
         </motion.div>
 
@@ -285,29 +285,42 @@ const SkillBag = () => {
                 setSelectedCategory(null);
               }
             }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img
+            <motion.img
               src="/my-bag.png"
               alt="Skill Bag"
               className="drop-shadow-lg"
               style={{ width: '240px', height: 'auto' }}
+              animate={!isOpen ? {
+                y: [0, -8, 0],
+                scale: [1, 1.02, 1],
+              } : {
+                y: 0,
+                scale: 1,
+              }}
+              transition={!isOpen ? {
+                y: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                },
+                scale: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              } : {
+                duration: 0.3
+              }}
             />
-            
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center pt-8"
-              animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-            >
-              <span className="font-body text-xs text-muted-foreground tracking-wider uppercase">
-                {isOpen ? "" : "Peek inside"}
-              </span>
-            </motion.div>
           </motion.button>
+
         </div>
 
         {/* Legend */}
