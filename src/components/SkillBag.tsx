@@ -14,6 +14,8 @@ import {
   Github, 
   Globe, 
   FileText,
+  Box,
+  Terminal,
   type LucideIcon
 } from "lucide-react";
 
@@ -23,6 +25,7 @@ const skills: Array<{ name: string; icon: LucideIcon; category: string }> = [
   { name: "Adobe CC", icon: Layers, category: "The Aesthetic" },
   { name: "Procreate", icon: Paintbrush, category: "The Aesthetic" },
   { name: "Elementor", icon: Layout, category: "The Aesthetic" },
+  { name: "Divi Theme Builder", icon: Box, category: "The Aesthetic" },
 
   // THE ENGINE (Development & Code)
   { name: "React", icon: Code, category: "The Engine" },
@@ -38,6 +41,7 @@ const skills: Array<{ name: string; icon: LucideIcon; category: string }> = [
   { name: "Lovable", icon: Heart, category: "The Essentials" },
   { name: "Git", icon: GitBranch, category: "The Essentials" },
   { name: "GitHub", icon: Github, category: "The Essentials" },
+  { name: "VS Code", icon: Terminal, category: "The Essentials" },
 ];
 
 // Kategorifärger - starka pastellfärger
@@ -173,7 +177,7 @@ const SkillBag = () => {
             The Skill Bag
           </h2>
           <p className="font-body text-muted-foreground">
-            Click the bag to reveal what's inside
+          A look at the tools I use to design and build.
           </p>
         </motion.div>
 
@@ -288,54 +292,19 @@ const SkillBag = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <svg
-              width="160"
-              height="180"
-              viewBox="0 0 160 180"
-              fill="none"
+            <img
+              src="/my-bag.png"
+              alt="Skill Bag"
               className="drop-shadow-lg"
-            >
-              {/* Bag Body */}
-              <path
-                d="M20 60 C20 60 10 170 80 170 C150 170 140 60 140 60 L20 60"
-                fill="hsl(var(--card))"
-                stroke="hsl(var(--border))"
-                strokeWidth="2"
-              />
-              {/* Bag Top */}
-              <ellipse
-                cx="80"
-                cy="60"
-                rx="60"
-                ry="15"
-                fill="hsl(var(--secondary))"
-                stroke="hsl(var(--border))"
-                strokeWidth="2"
-              />
-              {/* Handles */}
-              <path
-                d="M50 55 Q50 25 80 25 Q110 25 110 55"
-                fill="none"
-                stroke="hsl(var(--charcoal-light))"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              {/* Accent Line */}
-              <path
-                d="M35 90 Q80 100 125 90"
-                fill="none"
-                stroke="hsl(var(--terracotta))"
-                strokeWidth="2"
-                opacity="0.6"
-              />
-            </svg>
+              style={{ width: '240px', height: 'auto' }}
+            />
             
             <motion.div
               className="absolute inset-0 flex items-center justify-center pt-8"
               animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
             >
               <span className="font-body text-xs text-muted-foreground tracking-wider uppercase">
-                {isOpen ? "" : "Click me"}
+                {isOpen ? "" : "Peek inside"}
               </span>
             </motion.div>
           </motion.button>
