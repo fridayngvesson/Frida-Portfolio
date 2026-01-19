@@ -16,6 +16,7 @@ import {
   FileText,
   Box,
   Terminal,
+  ShoppingCart,
   type LucideIcon
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ const skills: Array<{ name: string; icon: LucideIcon; category: string }> = [
   { name: "Node.js", icon: Database, category: "The Engine" },
   { name: "MongoDB", icon: Database, category: "The Engine" },
   { name: "WordPress", icon: FileText, category: "The Engine" },
+  { name: "WooCommerce", icon: ShoppingCart, category: "The Engine" },
 
   // THE ESSENTIALS (Tools & Workflow)
   { name: "Cursor", icon: MousePointer, category: "The Essentials" },
